@@ -214,10 +214,9 @@ export default class FormTable extends Vue {
             if (res.errno === 0) {
               const result = res.data;
               this.$emit('callbackDataFormat', result);
-              resolve();
+              resolve(undefined);
             } else {
-              // eslint-disable-next-line prefer-promise-reject-errors
-              reject();
+              reject(Error('获取数据失败'));
             }
           });
       });
