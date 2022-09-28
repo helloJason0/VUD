@@ -29,14 +29,18 @@
     "core-js": "^3.6.4",
     "dayjs": "^1.11.5",
     "element-ui": "^2.13.0",
+    "free-utils": "^1.1.0",
     "github-markdown-css": "^3.0.1",
     "marked": "^4.0.10",
     "raw-loader": "^4.0.0",
-    "vue": "^2.6.11",
+    
     "vue-class-component": "^7.2.2",
     "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.5",
     "vue-virtual-scroller": "^1.0.10"
+  },
+  "peerDependencies": {
+    "vue": ">=2.6.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
@@ -99,6 +103,7 @@
       "@typescript-eslint/camelcase": "off",
       "@typescript-eslint/no-var-requires": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/triple-slash-reference": 0,
       "no-void": "off"
     },
     "overrides": [

@@ -1,10 +1,14 @@
 <template>
   <div class="container">
     <el-row :gutter="24" style="margin: 0">
-      <el-form :model="tempFormData" ref="formRef" v-bind="formConfig" inline label-position="left">
+      <el-form
+        :model="tempFormData"
+        ref="formRef"
+        v-bind="formConfig"
+        label-position="left"
+      >
         <el-col
           v-for="{
-            title,
             type,
             field,
             formSlotName,
@@ -18,25 +22,34 @@
           :span="span || 8"
           :key="field"
         >
-          <el-form-item :label="formLabel || title" :prop="formName || field">
-            <slot v-if="formSlotName" :modelVal="tempFormData[formName || field]" />
+          <el-form-item
+            :label="formLabel"
+            :prop="formName || field"
+            class="form-item"
+          >
+            <slot
+              v-if="formSlotName"
+              class="item-content"
+              :modelVal="tempFormData[formName || field]"
+            />
             <!-- <slot :name="" > -->
             <template v-else>
               <date-picker
                 v-if="type === 'dateRange'"
-                :placeholder="`请选择${title}`"
+                :placeholder="`请选择${formLabel}`"
                 v-model="tempFormData[field]"
                 v-bind="formProps"
                 v-on="formEmits"
-                style="width: 220px"
+                class="item-content"
                 size="small"
               />
               <el-select
                 v-else-if="type === 'select'"
-                :placeholder="`请选择${title}`"
+                :placeholder="`请选择${formLabel}`"
                 v-model="tempFormData[field]"
                 v-bind="formProps"
                 v-on="formEmits"
+                class="item-content"
                 size="small"
               >
                 <el-option
@@ -50,7 +63,8 @@
               <el-input
                 v-else
                 v-model="tempFormData[field]"
-                :placeholder="`请输入${title}`"
+                :placeholder="`请输入${formLabel}`"
+                class="item-content"
                 v-bind="formProps"
                 v-on="formEmits"
                 size="small"
@@ -61,14 +75,43 @@
         </el-col>
       </el-form>
       <div class="operate-bar">
-        <el-button :loading="loading" type="primary" size="small" class="operate-item" @click="selectSubmit">
+        <el-button
+          :loading="loading"
+          type="primary"
+          size="small"
+          class="operate-item"
+          @click="selectSubmit"
+        >
           查询
         </el-button>
-        <slot name="formOperate" :formData="formData" :uploadTable="uploadTable" />
+        <slot
+          name="formOperate"
+          :formData="formData"
+          :uploadTable="uploadTable"
+        />
       </div>
     </el-row>
-    <el-table v-loading="loading" :data="tableData" class="table" border :row-key="rowKey" v-bind="$attrs">
-      <template v-for="{ title, field, width, columnProps, columnSlotName, hideInTable, fixed, formatter } in columns">
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      class="table"
+      border
+      :row-key="rowKey"
+      v-bind="$attrs"
+    >
+      <template
+        v-for="{
+          title,
+          field,
+          width,
+          columnProps,
+          columnSlotName,
+          hideInTable,
+          fixed,
+          formatter,
+          valueEnum,
+        } in columnsOpt"
+      >
         <el-table-column
           v-if="!hideInTable"
           :key="field"
@@ -76,10 +119,16 @@
           :label="title"
           :width="width"
           :fixed="fixed"
-          :formatter="formatter"
+          :formatter="
+            formatter ||
+            (valueEnum && ((row, _t, val) => formatterHandle(val, valueEnum)))
+          "
           v-bind="columnProps"
         >
-          <template v-for="(slotVal, slotKey) in (columnSlotName || {})" #[slotKey]="scope">
+          <template
+            v-for="(slotVal, slotKey) in columnSlotName || {}"
+            #[slotKey]="scope"
+          >
             <slot :name="slotVal" v-bind="scope" />
           </template>
         </el-table-column>
@@ -102,14 +151,14 @@
 </template>
 
 <script lang="ts">
-// import { filterOptionsHandle } from '@/common/tools';
-// import DatePicker from '../DatePicker';
-import DatePicker from '../../DatePicker'
-import { PropType } from 'vue'
-import type { Params, ProTableData, ProTableProps, RequestRes } from './type';
-import { valueEnumHandle } from './tools'
+/// <reference path="../../../@types" />
 
-export default {
+import DatePicker from '../../DatePicker';
+import Vue, { PropType } from 'vue';
+import type { Params, ProTableData, ProTableProps, RequestRes } from './type';
+import { valueEnumHandle, optionsHandle } from 'free-utils';
+
+export default Vue.extend({
   components: { DatePicker },
   props: {
     request: {
@@ -151,15 +200,26 @@ export default {
       return [
         ...this.columns
           .filter(({ search }) => search)
-          .map(({ field, title, valueEnum, options, ...reset }) => {
+          .map(({ title, valueEnum, options, formLabel, ...reset }) => {
             return {
-              field,
               title,
               options: options ?? valueEnumHandle(valueEnum || []),
+              formLabel: formLabel || title,
+              valueEnum,
               ...reset
             };
           })
       ];
+    },
+    columnsOpt () {
+      return this.columns.map(({ options, valueEnum, ...resets }) => {
+        const optionsSource = options || valueEnum
+        return {
+          valueEnum: optionsSource ? optionsHandle(optionsSource) : undefined,
+          options,
+          ...resets
+        }
+      })
     }
   },
   data () {
@@ -172,7 +232,7 @@ export default {
     return {
       formData: createData(),
       tempFormData: createData(),
-      tableData: [],
+      tableData: [] as ProTableData['tableData'],
       total: 0,
       current: 1,
       loading: false,
@@ -180,6 +240,10 @@ export default {
     };
   },
   methods: {
+    formatterHandle (val: string, valueEnum: Map<string | number, string | number>) {
+      const res = valueEnum.get(val)
+      return res !== undefined ? res : '--'
+    },
     async getTableData () {
       this.loading = true;
       try {
@@ -219,10 +283,19 @@ export default {
   mounted () {
     this.getTableData();
   }
-};
+})
 </script>
 
 <style lang="less" scoped>
+.form-item {
+  display: flex;
+}
+/deep/.el-form-item__content {
+  flex: 1;
+}
+.item-content {
+  width: 100%;
+}
 .container {
   background: #fff;
   height: 100%;
@@ -231,6 +304,7 @@ export default {
 }
 .operate-bar {
   float: right;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
+  line-height: 38px;
 }
 </style>

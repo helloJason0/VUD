@@ -43,7 +43,7 @@ export type ProTableProps = {
     /** formItem的插槽 */
     formSlotName?: string;
     /** options的配置 */
-    options?: (Record<'value' | 'label', string> & Record<string, any>)[];
+    options?: Record<'value' | 'label', string>[];
   }[];
 }
 export type Params = Record<string, unknown>

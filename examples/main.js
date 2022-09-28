@@ -6,12 +6,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 Vue.use(element)
 Vue.axios = axios
-// import vudui from '../packages/index'
+import vudui from '../packages/index'
 // 按需加载的全部
 // import '../lib/css/index.css'
 // import vudui from '../lib/index' 
-import vudui from 'vudui'
-import  "vudui/lib/css/index.css"; //整体输出的
+// import vudui from 'vudui'
+// import  "vudui/lib/css/index.css"; //整体输出的
 Vue.use(vudui)
 // import {
 //   MultiSelect,

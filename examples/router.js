@@ -6,6 +6,7 @@ import FormTable from './pages/FormTable'
 import MultiSelect from './pages/MultiSelect'
 import FormDialog from './pages/FormDialog'
 import VirtualSelect from "./pages/VirtualSelect";
+import ProTable from "./pages/ProTable";
 
 Vue.use(Router)
 
@@ -38,6 +39,10 @@ const router = new Router({
     {
       path: "/formdialog",
       component: FormDialog
+    },
+    {
+      path: "/protable",
+      component: ProTable
     }
   ]
 });
