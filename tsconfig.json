@@ -34,7 +34,7 @@
     "packages/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx", "@types/shims-vue.d.ts", "@types/shims-tsx.d.ts"
-  ],
+, "packages/pro-table/src/main.rbk"  ],
   "exclude": [
     "node_modules",
     "lib"

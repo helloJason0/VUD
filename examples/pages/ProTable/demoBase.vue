@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts">
+
 export default {
   data() {
     return {
@@ -71,7 +72,8 @@ export default {
           {
             id: 22619,
             batchId: "ADJUST1663246",
-            city: 1,
+            area: '2',
+            city: '1',
             submitter: "宋丞",
             submitter_phone: "15541974850",
             submit_time: "2022-09-15",

@@ -1,23 +1,4 @@
-<template>
-  <el-date-picker
-    v-model="dateVal"
-    type="daterange"
-    v-bind="$attrs"
-    size="small"
-    :editable="false"
-    range-separator="至"
-    start-placeholder="开始日期"
-    end-placeholder="结束日期"
-    :picker-options="pickerOptions"
-  >
-  </el-date-picker>
-</template>
-
-<script lang="ts">
-import dayjs from 'dayjs';
-import { PropType } from 'vue';
-
-export default {
+{
   model: {
     prop: 'value',
     event: 'change'
@@ -174,7 +155,3 @@ export default {
     }
   }
 };
-</script>
-
-<style>
-</style>

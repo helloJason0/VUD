@@ -151,139 +151,139 @@
 </template>
 
 <script lang="ts">
-/// <reference path="../../../@types" />
-
-import DatePicker from '../../DatePicker';
-import Vue, { PropType } from 'vue';
+import DatePicker from '../../date-picker';
 import type { Params, ProTableData, ProTableProps, RequestRes } from './type';
 import { valueEnumHandle, optionsHandle } from 'free-utils';
+import { Vue, Prop, Component } from 'vue-property-decorator';
 
-export default Vue.extend({
-  components: { DatePicker },
-  props: {
-    request: {
-      type: Function as PropType<(params: Params) => Promise<RequestRes>>,
-      default: () => () => new Promise<RequestRes>((resolve) => {
-        resolve({} as RequestRes)
-      })
-    },
-    columns: {
-      type: Array as PropType<ProTableProps['columns']>,
-      default: () => []
-    },
-    rowKey: {
-      type: String as PropType<string>,
-      default: 'id'
-    },
-    /** 页面大小 */
-    pageSize: {
-      type: Number as PropType<number>,
-      default: 50
-    },
-    /** 当前页的名称 */
-    currentField: {
-      type: String as PropType<string>,
-      default: 'page_no'
-    },
-    pageSizeField: {
-      type: String as PropType<string>,
-      default: 'page_size'
-    },
-    formConfig: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  name: 'ProTable',
-  computed: {
-    formColumns () {
-      return [
-        ...this.columns
-          .filter(({ search }) => search)
-          .map(({ title, valueEnum, options, formLabel, ...reset }) => {
-            return {
-              title,
-              options: options ?? valueEnumHandle(valueEnum || []),
-              formLabel: formLabel || title,
-              valueEnum,
-              ...reset
-            };
-          })
-      ];
-    },
-    columnsOpt () {
-      return this.columns.map(({ options, valueEnum, ...resets }) => {
-        const optionsSource = options || valueEnum
-        return {
-          valueEnum: optionsSource ? optionsHandle(optionsSource) : undefined,
-          options,
-          ...resets
-        }
-      })
-    }
-  },
-  data () {
-    const createData = (): ProTableData['formData'] =>
+@Component({
+  components: { DatePicker }
+})
+export default class ProTable extends Vue {
+  @Prop({
+    type: Function
+  })
+  readonly request: ((params: Params) => Promise<RequestRes>) | undefined;
+
+  @Prop({ type: Array, default: () => [] })
+  readonly columns!: ProTableProps['columns'];
+
+  /** 遍历的主键 */
+  @Prop({ type: String, default: 'id' })
+  readonly rowKey!: string
+
+  /** 页面大小 */
+  @Prop({ type: Number, default: 50 })
+  readonly pageSize!: number
+
+  /** 当前页的名称 */
+  @Prop({ type: String, default: 'page_no' })
+  readonly currentField!: string
+
+  @Prop({ type: String, default: 'page_size' })
+  readonly pageSizeField!: string
+
+  @Prop({ type: Object, default: () => ({}) })
+  readonly formConfig: any;
+
+  name = 'ProTable';
+
+  createData = (): ProTableData['formData'] =>
       this.columns
-        .filter(({ search }) => search)
+        ?.filter(({ search }) => search)
         .reduce((pre, cur) => {
           return Object.assign(pre, { [cur.formName || cur.field]: cur.initValue });
-        }, {});
-    return {
-      formData: createData(),
-      tempFormData: createData(),
-      tableData: [] as ProTableData['tableData'],
-      total: 0,
-      current: 1,
-      loading: false,
-      pageSizeData: 0
-    };
-  },
-  methods: {
-    formatterHandle (val: string, valueEnum: Map<string | number, string | number>) {
-      const res = valueEnum.get(val)
-      return res !== undefined ? res : '--'
-    },
-    async getTableData () {
-      this.loading = true;
-      try {
-        const { currentField, pageSizeField, current, pageSize, formData } = this;
-        const { list, ...resetData } = await this.request({
-          ...formData,
-          [currentField]: current,
-          [pageSizeField]: pageSize
-        });
-        const tableData = list || resetData.tableData;
-        Object.assign(this, { ...resetData, tableData });
-      } catch (error) {
-        console.error(error);
+        }, {}) || {};
+
+  get formColumns () {
+    return [
+      ...this.columns
+        .filter(({ search }) => search)
+        .map(({ title, valueEnum, options, formLabel, ...reset }) => {
+          return {
+            title,
+            options: options ?? valueEnumHandle(valueEnum || []),
+            formLabel: formLabel || title,
+            valueEnum,
+            ...reset
+          };
+        })
+    ];
+  };
+
+  get columnsOpt () {
+    return this.columns.map(({ options, valueEnum, ...resets }) => {
+      const optionsSource = options || valueEnum
+      return {
+        valueEnum: optionsSource ? optionsHandle(optionsSource) : undefined,
+        options,
+        ...resets
       }
-      this.loading = false;
-    },
-    selectSubmit () {
-      Object.assign(this.formData, this.tempFormData);
-      this.getTableData();
-    },
-    uploadTable () {
-      this.getTableData();
-    },
-    refreshTableData () {
-      this.current = 1;
-      this.getTableData();
-    },
-    sizeChange (num: number) {
-      this.pageSizeData = num;
-      this.getTableData();
-    },
-    pageChange (current: number) {
-      this.current = current;
-      this.getTableData();
-    }
-  },
+    })
+  }
+
+  /** 是否在加载中 */
+  loading = false;
+  formData: ProTableData['formData'] = this.createData();
+  tempFormData: ProTableData['formData'] = this.createData();
+  tableData: ProTableData['tableData'] = [];
+  total = 0;
+  current = 1;
+  pageSizeData = 0;
+
   mounted () {
     this.getTableData();
   }
-})
+
+  formatterHandle (val: string, valueEnum: Map<string | number, string | number>) {
+    const res = valueEnum.get(val)
+    return res !== undefined ? res : '--'
+  };
+
+  async getTableData () {
+    if (!this.request) {
+      return;
+    }
+    this.loading = true;
+    try {
+      const { currentField, pageSizeField, current, pageSize, formData } = this;
+      const { list, ...resetData } = await this.request({
+        ...formData,
+        [currentField]: current,
+        [pageSizeField]: pageSize
+      }) || {};
+      const tableData = list || resetData.tableData || [];
+      Object.assign(this, { ...resetData, tableData });
+    } catch (error) {
+      console.error(error);
+    }
+    this.loading = false;
+  };
+
+  selectSubmit () {
+    Object.assign(this.formData, this.tempFormData);
+    this.getTableData();
+  };
+
+  uploadTable () {
+    this.getTableData();
+  };
+
+  refreshTableData () {
+    this.current = 1;
+    this.getTableData();
+  };
+
+  sizeChange (num: number) {
+    this.pageSizeData = num;
+    this.getTableData();
+  };
+
+  pageChange (current: number) {
+    this.current = current;
+    this.getTableData();
+  }
+}
 </script>
 
 <style lang="less" scoped>

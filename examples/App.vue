@@ -146,7 +146,7 @@ html,body{
 
   &.page-container {
     padding: 0;
-    width: 1440px;
+    // width: 1440px;
     margin: 0 auto;
   }
 
