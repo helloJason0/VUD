@@ -1,5 +1,3 @@
-/// <reference path="../@types/shims-vue.d.ts" />
-
 import MultiSelect from './multi-select';
 import MultiOption from './multi-option';
 import FormTable from './form-table';

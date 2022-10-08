@@ -30,6 +30,7 @@
             <slot
               v-if="formSlotName"
               class="item-content"
+              :name="formSlotName"
               :modelVal="tempFormData[formName || field]"
             />
             <!-- <slot :name="" > -->
