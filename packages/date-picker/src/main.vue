@@ -14,20 +14,20 @@
 </template>
 
 <script lang="ts">
-import dayjs from 'dayjs'
-import { Vue, Prop, Component, Watch } from 'vue-property-decorator'
+import dayjs from "dayjs";
+import { Vue, Prop, Component, Watch } from "vue-property-decorator";
 
 @Component({
-  model: { prop: 'value', event: 'change' }
+  model: { prop: "value", event: "change" },
 })
 export default class DatePicker extends Vue {
-  name = 'DatePicker';
+  name = "DatePicker";
 
   @Prop({ type: Array, default: () => [] })
   /** 数据 */
   readonly value!: string[];
 
-  @Prop({ type: String, default: 'YYYY-MM-DD' })
+  @Prop({ type: String, default: "YYYY-MM-DD" })
   /** 数据的格式 */
   readonly format!: string;
 
@@ -35,9 +35,12 @@ export default class DatePicker extends Vue {
   /** 范围的最长的长度 */
   readonly dateLength!: number;
 
-  @Prop({ type: Number, default: Number(dayjs('20171024', 'YYYYMMDD').valueOf()) })
+  @Prop({
+    type: Number,
+    default: Number(dayjs("20171024", "YYYYMMDD").valueOf()),
+  })
   /** 能选择的最小日期 */
-  readonly minDate!: number;
+  readonly minDate?: number;
 
   @Prop({ type: Number })
   /** 能选择的最大日期 */
@@ -47,31 +50,33 @@ export default class DatePicker extends Vue {
   /** 屏蔽的日期列表 */
   readonly disabledDateList!: string[];
 
-  @Prop({ type: String, default: 'YYYYMMDD' })
+  @Prop({ type: String, default: "YYYYMMDD" })
   /** 屏蔽日期的列表格式 */
   readonly disableFormat!: string;
 
-  @Prop({ type: String, default: 'continuity' })
+  @Prop({ type: String, default: "continuity" })
   /** 值的类型 */
-  readonly valueType!: 'dispersed' | 'continuity';
+  readonly valueType!: "dispersed" | "continuity";
 
-  dateVal: Date[] = []
+  @Prop({ type: Boolean, default: false })
+  /** 是否显示快捷选项 */
+  readonly showShortcuts!: boolean;
 
-  pickerOptions: unknown;
+  dateVal: Date[] = [];
 
-  constructor () {
-    super();
-    const TIMELIMIT = dayjs(this.minDate).toDate()
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+  private tmpThat = {
+    maxDate: null as Date | null,
+    minDate: null as Date | null,
+  };
+
+  get pickerOptions() {
+    const TIMELIMIT = dayjs(this.minDate).toDate();
     const that = this;
-    const tmpThat = {
-      maxDate: null as Date | null,
-      minDate: null as Date | null
-    };
-    this.pickerOptions = {
-      disabledDate (time: Date) {
+    return {
+      disabledDate(time: Date) {
         const selectMoment = dayjs(time);
         const selectDate = selectMoment.format(that.disableFormat);
+        const { disabledDateList, dateLength } = that
         /** 当前时间的时间戳 */
         const selectTime = Number(selectMoment.valueOf());
         if (that.maxDate && selectTime > that.maxDate) {
@@ -81,25 +86,33 @@ export default class DatePicker extends Vue {
           return true;
         }
         // 屏蔽的列表
-        if (that.disabledDateList.includes(selectDate)) {
+        if (disabledDateList.includes(selectDate)) {
           return true;
         }
-        const { maxDate, minDate } = tmpThat;
+        const { maxDate, minDate } = that.tmpThat;
         if (maxDate && minDate) {
           return false;
         }
         const compareVal = minDate || maxDate;
-        if (that.dateLength && compareVal) {
+        if (dateLength && compareVal) {
           const compareTime = compareVal.getTime();
-          const length = that.dateLength * 24 * 3600 * 1000;
-          if (selectTime < compareTime - length || selectTime > compareTime + length) {
+          const length = dateLength * 24 * 3600 * 1000;
+          if (
+            selectTime < compareTime - length ||
+            selectTime > compareTime + length
+          ) {
             return true;
           }
-          const compareArr = [dayjs(compareVal).format(that.disableFormat), selectDate].sort();
+          const compareArr = [
+            dayjs(compareVal).format(that.disableFormat),
+            selectDate,
+          ].sort();
           // 遍历一下，如果这之间有一天在屏蔽列表中，那么就屏蔽了这天
           if (
-            that.disabledDateList.some(
-              (ele) => Number(compareArr[0]) < Number(ele) && Number(ele) < Number(compareArr[1])
+            disabledDateList.some(
+              (ele) =>
+                Number(compareArr[0]) < Number(ele) &&
+                Number(ele) < Number(compareArr[1])
             )
           ) {
             return true;
@@ -107,61 +120,146 @@ export default class DatePicker extends Vue {
         }
         return false;
       },
-      onPick (time: typeof tmpThat) {
-        tmpThat.maxDate = time.maxDate;
-        tmpThat.minDate = time.minDate;
+      onPick(time: typeof that.tmpThat) {
+        Object.assign(that.tmpThat, time);
       },
       shortcuts: [
         {
-          text: '最近一周',
-          onClick (picker: Vue) {
+          text: "最近一周",
+          onClick(picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit('pick', [start, end]);
-          }
+            picker.$emit("pick", [start, end]);
+          },
         },
         {
-          text: '最近一个月',
-          onClick (picker: Vue) {
+          text: "最近一个月",
+          onClick(picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit('pick', [start, end]);
-          }
+            picker.$emit("pick", [start, end]);
+          },
         },
         {
-          text: '最近三个月',
-          onClick (picker: Vue) {
+          text: "最近三个月",
+          onClick(picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit('pick', [start, end]);
-          }
-        }
-      ]
-    }
+            picker.$emit("pick", [start, end]);
+          },
+        },
+      ],
+    };
   }
 
-  @Watch('dateVal')
-  valChange (val: Date[]) {
-    const tempRes = [...(val || [])].map((item) => dayjs(item).startOf('d'));
+  constructor() {
+    super();
+    // const TIMELIMIT = dayjs(this.minDate).toDate();
+    // const that = this;
+    // const tmpThat = {
+    //   maxDate: null as Date | null,
+    //   minDate: null as Date | null,
+    // };
+    // this.pickerOptions = {
+    //   disabledDate (time: Date) {
+    //     const selectMoment = dayjs(time);
+    //     const selectDate = selectMoment.format(that.disableFormat);
+    //     /** 当前时间的时间戳 */
+    //     const selectTime = Number(selectMoment.valueOf());
+    //     if (that.maxDate && selectTime > that.maxDate) {
+    //       return true;
+    //     }
+    //     if (that.minDate && selectTime < that.minDate) {
+    //       return true;
+    //     }
+    //     // 屏蔽的列表
+    //     if (that.disabledDateList.includes(selectDate)) {
+    //       return true;
+    //     }
+    //     const { maxDate, minDate } = tmpThat;
+    //     if (maxDate && minDate) {
+    //       return false;
+    //     }
+    //     const compareVal = minDate || maxDate;
+    //     if (that.dateLength && compareVal) {
+    //       const compareTime = compareVal.getTime();
+    //       const length = that.dateLength * 24 * 3600 * 1000;
+    //       if (selectTime < compareTime - length || selectTime > compareTime + length) {
+    //         return true;
+    //       }
+    //       const compareArr = [dayjs(compareVal).format(that.disableFormat), selectDate].sort();
+    //       // 遍历一下，如果这之间有一天在屏蔽列表中，那么就屏蔽了这天
+    //       if (
+    //         that.disabledDateList.some(
+    //           (ele) => Number(compareArr[0]) < Number(ele) && Number(ele) < Number(compareArr[1])
+    //         )
+    //       ) {
+    //         return true;
+    //       }
+    //     }
+    //     return false;
+    //   },
+    //   onPick (time: typeof tmpThat) {
+    //     tmpThat.maxDate = time.maxDate;
+    //     tmpThat.minDate = time.minDate;
+    //   },
+    //   shortcuts: [
+    //     {
+    //       text: '最近一周',
+    //       onClick (picker: Vue) {
+    //         const end = new Date();
+    //         let start = new Date();
+    //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+    //         start = start >= TIMELIMIT ? start : TIMELIMIT;
+    //         picker.$emit('pick', [start, end]);
+    //       }
+    //     },
+    //     {
+    //       text: '最近一个月',
+    //       onClick (picker: Vue) {
+    //         const end = new Date();
+    //         let start = new Date();
+    //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+    //         start = start >= TIMELIMIT ? start : TIMELIMIT;
+    //         picker.$emit('pick', [start, end]);
+    //       }
+    //     },
+    //     {
+    //       text: '最近三个月',
+    //       onClick (picker: Vue) {
+    //         const end = new Date();
+    //         let start = new Date();
+    //         start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+    //         start = start >= TIMELIMIT ? start : TIMELIMIT;
+    //         picker.$emit('pick', [start, end]);
+    //       }
+    //     }
+    //   ]
+    // }
+  }
+
+  @Watch("dateVal")
+  valChange(val: Date[]) {
+    const tempRes = [...(val || [])].map((item) => dayjs(item).startOf("d"));
     let res: string[] = [];
-    if (this.valueType === 'dispersed' && tempRes.length >= 2) {
+    if (this.valueType === "dispersed" && tempRes.length >= 2) {
       let [start] = tempRes;
-      const [, end] = tempRes
+      const [, end] = tempRes;
       res = [];
       while (end.diff(start) >= 0) {
         res.push(start.format(this.format));
-        start = start.add(1, 'd');
+        start = start.add(1, "d");
       }
     } else {
       res = tempRes.map((item) => dayjs(item).format(this.format));
     }
-    this.$emit('change', res);
+    this.$emit("change", res);
   }
 }
 </script>

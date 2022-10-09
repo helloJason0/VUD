@@ -39,6 +39,15 @@ export default {
           },
         },
         {
+          field: 'dateRange',
+          title: '生效日期',
+          hideInTable: true,
+          width: '124px',
+          initValue: [],
+          type: 'dateRange',
+          search: true,
+        },
+        {
           field: "city",
           title: "城市",
           width: "64px",

@@ -152,51 +152,53 @@
 </template>
 
 <script lang="ts">
-import DatePicker from '../../date-picker';
-import type { Params, ProTableData, ProTableProps, RequestRes } from './type';
-import { valueEnumHandle, optionsHandle } from 'free-utils';
-import { Vue, Prop, Component } from 'vue-property-decorator';
+import DatePicker from "../../date-picker";
+import type { Params, ProTableData, ProTableProps, RequestRes } from "./type";
+import { valueEnumHandle, optionsHandle } from "free-utils";
+import { Vue, Prop, Component } from "vue-property-decorator";
 
 @Component({
-  components: { DatePicker }
+  components: { DatePicker },
 })
 export default class ProTable extends Vue {
   @Prop({
-    type: Function
+    type: Function,
   })
   readonly request: ((params: Params) => Promise<RequestRes>) | undefined;
 
   @Prop({ type: Array, default: () => [] })
-  readonly columns!: ProTableProps['columns'];
+  readonly columns!: ProTableProps["columns"];
 
   /** 遍历的主键 */
-  @Prop({ type: String, default: 'id' })
-  readonly rowKey!: string
+  @Prop({ type: String, default: "id" })
+  readonly rowKey!: string;
 
   /** 页面大小 */
   @Prop({ type: Number, default: 50 })
-  readonly pageSize!: number
+  readonly pageSize!: number;
 
   /** 当前页的名称 */
-  @Prop({ type: String, default: 'page_no' })
-  readonly currentField!: string
+  @Prop({ type: String, default: "page_no" })
+  readonly currentField!: string;
 
-  @Prop({ type: String, default: 'page_size' })
-  readonly pageSizeField!: string
+  @Prop({ type: String, default: "page_size" })
+  readonly pageSizeField!: string;
 
   @Prop({ type: Object, default: () => ({}) })
   readonly formConfig: any;
 
-  name = 'ProTable';
+  name = "ProTable";
 
-  createData = (): ProTableData['formData'] =>
-      this.columns
-        ?.filter(({ search }) => search)
-        .reduce((pre, cur) => {
-          return Object.assign(pre, { [cur.formName || cur.field]: cur.initValue });
-        }, {}) || {};
+  createData = (): ProTableData["formData"] =>
+    this.columns
+      ?.filter(({ search }) => search)
+      .reduce((pre, cur) => {
+        return Object.assign(pre, {
+          [cur.formName || cur.field]: cur.initValue,
+        });
+      }, {}) || {};
 
-  get formColumns () {
+  get formColumns() {
     return [
       ...this.columns
         .filter(({ search }) => search)
@@ -206,81 +208,87 @@ export default class ProTable extends Vue {
             options: options ?? valueEnumHandle(valueEnum || []),
             formLabel: formLabel || title,
             valueEnum,
-            ...reset
+            ...reset,
           };
-        })
+        }),
     ];
-  };
+  }
 
-  get columnsOpt () {
+  get columnsOpt() {
     return this.columns.map(({ options, valueEnum, ...resets }) => {
-      const optionsSource = options || valueEnum
+      const optionsSource = options || valueEnum;
       return {
         valueEnum: optionsSource ? optionsHandle(optionsSource) : undefined,
         options,
-        ...resets
-      }
-    })
+        ...resets,
+      };
+    });
   }
 
   /** 是否在加载中 */
   loading = false;
-  formData: ProTableData['formData'] = this.createData();
-  tempFormData: ProTableData['formData'] = this.createData();
-  tableData: ProTableData['tableData'] = [];
+  formData: ProTableData["formData"] = this.createData();
+  tempFormData: ProTableData["formData"] = this.createData();
+  tableData: ProTableData["tableData"] = [];
   total = 0;
   current = 1;
   pageSizeData = 0;
 
-  mounted () {
+  mounted() {
+    this.formData = this.createData()
+    this.tempFormData = this.createData()
     this.getTableData();
   }
 
-  formatterHandle (val: string, valueEnum: Map<string | number, string | number>) {
-    const res = valueEnum.get(val)
-    return res !== undefined ? res : '--'
-  };
+  formatterHandle(
+    val: string,
+    valueEnum: Map<string | number, string | number>
+  ) {
+    const res = valueEnum.get(val);
+    return res !== undefined ? res : "--";
+  }
 
-  async getTableData () {
+  async getTableData() {
     if (!this.request) {
       return;
     }
     this.loading = true;
     try {
       const { currentField, pageSizeField, current, pageSize, formData } = this;
-      const { list, ...resetData } = await this.request({
-        ...formData,
-        [currentField]: current,
-        [pageSizeField]: pageSize
-      }) || {};
+      const { list, ...resetData } =
+        (await this.request({
+          ...formData,
+          [currentField]: current,
+          [pageSizeField]: pageSize,
+        })) || {};
       const tableData = list || resetData.tableData || [];
       Object.assign(this, { ...resetData, tableData });
     } catch (error) {
       console.error(error);
     }
     this.loading = false;
-  };
+  }
 
-  selectSubmit () {
+  selectSubmit() {
     Object.assign(this.formData, this.tempFormData);
     this.getTableData();
-  };
+  }
 
-  uploadTable () {
+  uploadTable() {
     this.getTableData();
-  };
+  }
 
-  refreshTableData () {
+  refreshTableData() {
     this.current = 1;
     this.getTableData();
-  };
+  }
 
-  sizeChange (num: number) {
+  sizeChange(num: number) {
     this.pageSizeData = num;
     this.getTableData();
-  };
+  }
 
-  pageChange (current: number) {
+  pageChange(current: number) {
     this.current = current;
     this.getTableData();
   }
