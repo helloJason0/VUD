@@ -42,6 +42,7 @@
                 v-bind="formProps"
                 v-on="formEmits"
                 class="item-content"
+                style="width: 100%"
                 size="small"
               />
               <el-select
