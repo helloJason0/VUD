@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="pro-table-container">
     <el-row :gutter="24" style="margin: 0">
       <el-form
         :model="tempFormData"
@@ -305,11 +305,12 @@ export default class ProTable extends Vue {
 .item-content {
   width: 100%;
 }
-.container {
+.pro-table-container {
   background: #fff;
   height: 100%;
   padding: 16px;
   box-sizing: border-box;
+  display: block;
 }
 .operate-bar {
   float: right;
