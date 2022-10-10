@@ -1,6 +1,6 @@
 {
   "name": "vudui",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "基于elementui二次开发的组件",
   "module": "lib/index.js",
   "private": false,
