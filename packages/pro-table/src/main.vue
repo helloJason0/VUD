@@ -12,7 +12,7 @@
             type,
             field,
             formSlotName,
-            formProps,
+            formProps = {},
             formEmits,
             options,
             formName,
@@ -43,6 +43,7 @@
                 v-on="formEmits"
                 class="item-content"
                 style="width: 100%"
+                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
                 size="small"
               />
               <el-select
@@ -52,6 +53,7 @@
                 v-bind="formProps"
                 v-on="formEmits"
                 class="item-content"
+                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
                 size="small"
               >
                 <el-option
@@ -69,6 +71,7 @@
                 class="item-content"
                 v-bind="formProps"
                 v-on="formEmits"
+                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
                 size="small"
               />
             </template>
