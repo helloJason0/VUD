@@ -250,7 +250,7 @@ export default class ProTable extends Vue {
     valueEnum: Map<string | number, string | number>
   ) {
     const res = valueEnum.get(val);
-    return res !== undefined ? res : '--';
+    return res !== undefined ? res : ([undefined, null, ''].includes(val) ? '--' : val);
   }
 
   /** 获取数据信息 */
