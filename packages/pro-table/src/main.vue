@@ -24,21 +24,21 @@
         >
           <el-form-item
             :label="formLabel"
-            :prop="formName || field"
+            :prop="formName"
             class="form-item"
           >
             <slot
               v-if="formSlotName"
               class="item-content"
               :name="formSlotName"
-              :modelVal="tempFormData[formName || field]"
+              :modelVal="tempFormData[formName]"
             />
             <!-- <slot :name="" > -->
             <template v-else>
               <date-picker
                 v-if="type === 'dateRange'"
                 :placeholder="`请选择${formLabel}`"
-                v-model="tempFormData[field]"
+                v-model="tempFormData[formName]"
                 v-bind="formProps"
                 v-on="formEmits"
                 class="item-content"
@@ -49,7 +49,7 @@
               <el-select
                 v-else-if="type === 'select'"
                 :placeholder="`请选择${formLabel}`"
-                v-model="tempFormData[field]"
+                v-model="tempFormData[formName]"
                 v-bind="formProps"
                 v-on="formEmits"
                 class="item-content"
@@ -67,7 +67,7 @@
               </el-select>
               <el-input
                 v-else
-                v-model="tempFormData[field]"
+                v-model="tempFormData[formName]"
                 :placeholder="`请输入${formLabel}`"
                 class="item-content"
                 v-bind="formProps"
@@ -207,11 +207,13 @@ export default class ProTable extends Vue {
     return [
       ...this.columns
         .filter(({ search }) => search)
-        .map(({ title, valueEnum, options, formLabel, ...reset }) => {
+        .map(({ title, field, valueEnum, options, formLabel, formName, ...reset }) => {
           return {
             title,
+            field,
             options: options ?? valueEnumHandle(valueEnum || []),
             formLabel: formLabel || title,
+            formName: formName || field,
             valueEnum,
             ...reset
           };
