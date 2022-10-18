@@ -14,20 +14,20 @@
 </template>
 
 <script lang="ts">
-import dayjs from "dayjs";
-import { Vue, Prop, Component, Watch } from "vue-property-decorator";
+import dayjs from 'dayjs';
+import { Vue, Prop, Component, Watch } from 'vue-property-decorator';
 
 @Component({
-  model: { prop: "value", event: "change" },
+  model: { prop: 'value', event: 'change' }
 })
 export default class DatePicker extends Vue {
-  name = "DatePicker";
+  name = 'DatePicker';
 
   @Prop({ type: Array, default: () => [] })
   /** 数据 */
   readonly value!: string[];
 
-  @Prop({ type: String, default: "YYYY-MM-DD" })
+  @Prop({ type: String, default: 'YYYY-MM-DD' })
   /** 数据的格式 */
   readonly format!: string;
 
@@ -37,7 +37,7 @@ export default class DatePicker extends Vue {
 
   @Prop({
     type: Number,
-    default: Number(dayjs("20171024", "YYYYMMDD").valueOf()),
+    default: Number(dayjs('20171024', 'YYYYMMDD').valueOf())
   })
   /** 能选择的最小日期 */
   readonly minDate?: number;
@@ -50,13 +50,13 @@ export default class DatePicker extends Vue {
   /** 屏蔽的日期列表 */
   readonly disabledDateList!: string[];
 
-  @Prop({ type: String, default: "YYYYMMDD" })
+  @Prop({ type: String, default: 'YYYYMMDD' })
   /** 屏蔽日期的列表格式 */
   readonly disableFormat!: string;
 
-  @Prop({ type: String, default: "continuity" })
+  @Prop({ type: String, default: 'continuity' })
   /** 值的类型 */
-  readonly valueType!: "dispersed" | "continuity";
+  readonly valueType!: 'dispersed' | 'continuity';
 
   @Prop({ type: Boolean, default: false })
   /** 是否显示快捷选项 */
@@ -66,14 +66,15 @@ export default class DatePicker extends Vue {
 
   private tmpThat = {
     maxDate: null as Date | null,
-    minDate: null as Date | null,
+    minDate: null as Date | null
   };
 
-  get pickerOptions() {
+  get pickerOptions () {
     const TIMELIMIT = dayjs(this.minDate).toDate();
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this;
     return {
-      disabledDate(time: Date) {
+      disabledDate (time: Date) {
         const selectMoment = dayjs(time);
         const selectDate = selectMoment.format(that.disableFormat);
         const { disabledDateList, dateLength } = that;
@@ -105,7 +106,7 @@ export default class DatePicker extends Vue {
           }
           const compareArr = [
             dayjs(compareVal).format(that.disableFormat),
-            selectDate,
+            selectDate
           ].sort();
           // 遍历一下，如果这之间有一天在屏蔽列表中，那么就屏蔽了这天
           if (
@@ -120,64 +121,60 @@ export default class DatePicker extends Vue {
         }
         return false;
       },
-      onPick(time: typeof that.tmpThat) {
+      onPick (time: typeof that.tmpThat) {
         Object.assign(that.tmpThat, time);
       },
       shortcuts: that.showShortcuts ? [
         {
-          text: "最近一周",
-          onClick(picker: Vue) {
+          text: '最近一周',
+          onClick (picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit("pick", [start, end]);
-          },
+            picker.$emit('pick', [start, end]);
+          }
         },
         {
-          text: "最近一个月",
-          onClick(picker: Vue) {
+          text: '最近一个月',
+          onClick (picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit("pick", [start, end]);
-          },
+            picker.$emit('pick', [start, end]);
+          }
         },
         {
-          text: "最近三个月",
-          onClick(picker: Vue) {
+          text: '最近三个月',
+          onClick (picker: Vue) {
             const end = new Date();
             let start = new Date();
             start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
             start = start >= TIMELIMIT ? start : TIMELIMIT;
-            picker.$emit("pick", [start, end]);
-          },
-        },
-      ] : undefined,
+            picker.$emit('pick', [start, end]);
+          }
+        }
+      ] : undefined
     };
   }
 
-  constructor() {
-    super();
-  }
-
-  @Watch("dateVal")
-  valChange(val: Date[]) {
-    const tempRes = [...(val || [])].map((item) => dayjs(item).startOf("d"));
+  @Watch('dateVal')
+  valChange (val: Date[]) {
+    const tempRes = [...(val || [])].map((item) => dayjs(item).startOf('d'));
     let res: string[] = [];
-    if (this.valueType === "dispersed" && tempRes.length >= 2) {
+    if (this.valueType === 'dispersed' && tempRes.length >= 2) {
       let [start] = tempRes;
       const [, end] = tempRes;
       res = [];
       while (end.diff(start) >= 0) {
         res.push(start.format(this.format));
-        start = start.add(1, "d");
+        start = start.add(1, 'd');
       }
     } else {
       res = tempRes.map((item) => dayjs(item).format(this.format));
     }
-    this.$emit("change", res);
+    this.$emit('change', res);
   }
 }
 </script>

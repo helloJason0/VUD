@@ -202,14 +202,15 @@ export default class ProTable extends Vue {
 
   name = 'ProTable';
 
-  createData = (): ProTableData['formData'] =>
-    this.columns
+  createData (columns?: ProTableProps['columns']): ProTableData['formData'] {
+    return (columns || this.columns)
       ?.filter(({ search }) => search)
       .reduce((pre, cur) => {
         return Object.assign(pre, {
           [cur.formName || cur.field]: cur.initValue
         });
       }, {}) || {};
+  }
 
   get formColumns () {
     return [
@@ -295,9 +296,7 @@ export default class ProTable extends Vue {
   }
 
   resetFormData () {
-    if (!Array.isArray(this.$refs.formRef)) {
-      (this.$refs.formRef as any).resetFields();
-    }
+    Object.assign(this.tempFormData, this.createData(this.columns))
     this.selectSubmit()
   }
 
