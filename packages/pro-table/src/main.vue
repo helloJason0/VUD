@@ -90,6 +90,14 @@
         >
           查询
         </el-button>
+        <el-button
+          :loading="loading"
+          size="small"
+          class="operate-item"
+          @click="resetFormData"
+        >
+          重置
+        </el-button>
         <slot
           name="formOperate"
           :formData="formData"
@@ -284,6 +292,13 @@ export default class ProTable extends Vue {
   selectSubmit () {
     Object.assign(this.formData, this.tempFormData);
     this.getTableData();
+  }
+
+  resetFormData () {
+    if (!Array.isArray(this.$refs.formRef)) {
+      (this.$refs.formRef as any).resetFields();
+    }
+    this.selectSubmit()
   }
 
   uploadTable () {
