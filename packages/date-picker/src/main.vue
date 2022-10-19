@@ -1,6 +1,7 @@
 <template>
   <el-date-picker
-    v-model="dateVal"
+    :value="dateVal"
+    @input="valChange"
     type="daterange"
     v-bind="$attrs"
     size="small"
@@ -15,7 +16,7 @@
 
 <script lang="ts">
 import dayjs from 'dayjs';
-import { Vue, Prop, Component, Watch } from 'vue-property-decorator';
+import { Vue, Prop, Component } from 'vue-property-decorator';
 
 @Component({
   model: { prop: 'value', event: 'change' }
@@ -62,7 +63,14 @@ export default class DatePicker extends Vue {
   /** 是否显示快捷选项 */
   readonly showShortcuts!: boolean;
 
-  dateVal: Date[] = [];
+  get dateVal (): Date[] {
+    const { value = [] } = this
+    if (value.length >= 2) {
+      return [dayjs(value[0]).toDate(), dayjs(value[value.length - 1]).toDate()]
+    } else {
+      return []
+    }
+  }
 
   private tmpThat = {
     maxDate: null as Date | null,
@@ -159,7 +167,6 @@ export default class DatePicker extends Vue {
     };
   }
 
-  @Watch('dateVal')
   valChange (val: Date[]) {
     const tempRes = [...(val || [])].map((item) => dayjs(item).startOf('d'));
     let res: string[] = [];
