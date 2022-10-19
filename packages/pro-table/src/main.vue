@@ -83,6 +83,14 @@
       <div class="operate-bar">
         <el-button
           :loading="loading"
+          size="small"
+          class="operate-item"
+          @click="resetFormData"
+        >
+          重置
+        </el-button>
+        <el-button
+          :loading="loading"
           type="primary"
           size="small"
           class="operate-item"
@@ -90,18 +98,14 @@
         >
           查询
         </el-button>
-        <el-button
-          :loading="loading"
-          size="small"
-          class="operate-item"
-          @click="resetFormData"
-        >
-          重置
-        </el-button>
         <slot
           name="formOperate"
+          :loading="loading"
           :formData="formData"
           :uploadTable="uploadTable"
+          :tableData="tableData"
+          :submitForm="selectSubmit"
+          :resetForm="resetFormData"
         />
       </div>
     </el-row>
@@ -174,6 +178,7 @@ import { Vue, Prop, Component } from 'vue-property-decorator';
   components: { DatePicker }
 })
 export default class ProTable extends Vue {
+  /** 请求数据的方法 */
   @Prop({
     type: Function
   })
@@ -199,6 +204,10 @@ export default class ProTable extends Vue {
 
   @Prop({ type: Object, default: () => ({}) })
   readonly formConfig: any;
+
+  /** 重置的时候重新加载, 如果关闭了的话点击重置就不会翻到第一页和重新加载 */
+  @Prop({ type: Boolean, default: true })
+  readonly resetReload: boolean | undefined
 
   name = 'ProTable';
 
@@ -297,7 +306,10 @@ export default class ProTable extends Vue {
 
   resetFormData () {
     Object.assign(this.tempFormData, this.createData(this.columns))
-    this.selectSubmit()
+    if (this.resetReload) {
+      Object.assign(this.formData, this.tempFormData);
+      this.pageChange(1)
+    }
   }
 
   uploadTable () {
