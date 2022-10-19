@@ -1,8 +1,10 @@
 {
   "name": "vudui",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "基于elementui二次开发的组件",
   "module": "lib/index.js",
+  "types": "package/index.ts",
+  "typings": "package/index.ts",
   "private": false,
   "keywords": [
     "vue",
@@ -24,6 +26,13 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
   },
+  "files": [
+    "dist",
+    "lib",
+    "packages",
+    "utils",
+    "@types"
+  ],
   "dependencies": {
     "@types/axios": "^0.14.0",
     "axios": "^0.21.1",
