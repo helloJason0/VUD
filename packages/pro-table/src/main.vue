@@ -164,7 +164,7 @@
       </template>
     </el-table>
     <el-pagination
-      style="float: right; margin-right: 16px"
+      style="float: right; margin-right: -16px; margin-top: 16px"
       background
       :current-page="current"
       :page-size="pageSizeData || pageSize"
@@ -372,6 +372,7 @@ export default class ProTable extends Vue {
   padding: 16px;
   box-sizing: border-box;
   display: block;
+  overflow: auto;
 }
 .operate-bar {
   float: right;
