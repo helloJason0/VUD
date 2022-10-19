@@ -22,11 +22,7 @@
           :span="span || 8"
           :key="field"
         >
-          <el-form-item
-            :label="formLabel"
-            :prop="formName"
-            class="form-item"
-          >
+          <el-form-item :label="formLabel" :prop="formName" class="form-item">
             <slot
               v-if="formSlotName"
               class="item-content"
@@ -43,7 +39,9 @@
                 v-on="formEmits"
                 class="item-content"
                 style="width: 100%"
-                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
+                :clearable="
+                  formProps.clearable === undefined ? true : formProps.clearable
+                "
                 size="small"
               />
               <el-select
@@ -54,7 +52,9 @@
                 v-on="formEmits"
                 class="item-content"
                 filterable
-                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
+                :clearable="
+                  formProps.clearable === undefined ? true : formProps.clearable
+                "
                 size="small"
               >
                 <el-option
@@ -72,7 +72,9 @@
                 class="item-content"
                 v-bind="formProps"
                 v-on="formEmits"
-                :clearable="formProps.clearable === undefined ? true : formProps.clearable"
+                :clearable="
+                  formProps.clearable === undefined ? true : formProps.clearable
+                "
                 size="small"
               />
             </template>
@@ -147,7 +149,16 @@
             v-for="(slotVal, slotKey) in columnSlotName || {}"
             #[slotKey]="scope"
           >
-            <slot :name="slotVal" v-bind="scope" />
+            <slot
+              :name="slotVal"
+              v-bind="scope"
+              :loading="loading"
+              :formData="formData"
+              :uploadTable="uploadTable"
+              :tableData="tableData"
+              :submitForm="selectSubmit"
+              :resetForm="resetFormData"
+            />
           </template>
         </el-table-column>
       </template>
@@ -207,35 +218,47 @@ export default class ProTable extends Vue {
 
   /** 重置的时候重新加载, 如果关闭了的话点击重置就不会翻到第一页和重新加载 */
   @Prop({ type: Boolean, default: true })
-  readonly resetReload: boolean | undefined
+  readonly resetReload: boolean | undefined;
 
   name = 'ProTable';
 
   createData (columns?: ProTableProps['columns']): ProTableData['formData'] {
-    return (columns || this.columns)
-      ?.filter(({ search }) => search)
-      .reduce((pre, cur) => {
-        return Object.assign(pre, {
-          [cur.formName || cur.field]: cur.initValue
-        });
-      }, {}) || {};
+    return (
+      (columns || this.columns)
+        ?.filter(({ search }) => search)
+        .reduce((pre, cur) => {
+          return Object.assign(pre, {
+            [cur.formName || cur.field]: cur.initValue
+          });
+        }, {}) || {}
+    );
   }
 
   get formColumns () {
     return [
       ...this.columns
         .filter(({ search }) => search)
-        .map(({ title, field, valueEnum, options, formLabel, formName, ...reset }) => {
-          return {
+        .map(
+          ({
             title,
             field,
-            options: options ?? valueEnumHandle(valueEnum || []),
-            formLabel: formLabel || title,
-            formName: formName || field,
             valueEnum,
+            options,
+            formLabel,
+            formName,
             ...reset
-          };
-        })
+          }) => {
+            return {
+              title,
+              field,
+              options: options ?? valueEnumHandle(valueEnum || []),
+              formLabel: formLabel || title,
+              formName: formName || field,
+              valueEnum,
+              ...reset
+            };
+          }
+        )
     ];
   }
 
@@ -260,8 +283,8 @@ export default class ProTable extends Vue {
   pageSizeData = 0;
 
   mounted () {
-    this.formData = this.createData()
-    this.tempFormData = this.createData()
+    this.formData = this.createData();
+    this.tempFormData = this.createData();
     this.getTableData();
   }
 
@@ -280,7 +303,7 @@ export default class ProTable extends Vue {
       ...formData,
       [currentField]: current,
       [pageSizeField]: pageSize
-    }
+    };
   }
 
   async getTableData () {
@@ -305,10 +328,10 @@ export default class ProTable extends Vue {
   }
 
   resetFormData () {
-    Object.assign(this.tempFormData, this.createData(this.columns))
+    Object.assign(this.tempFormData, this.createData(this.columns));
     if (this.resetReload) {
       Object.assign(this.formData, this.tempFormData);
-      this.pageChange(1)
+      this.pageChange(1);
     }
   }
 

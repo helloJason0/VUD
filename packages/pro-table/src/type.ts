@@ -1,6 +1,6 @@
-export type ProTableColumn = {
+export type ProTableColumn<K extends string = string> = {
   /** 字段的名称 */
-  field: string;
+  field: keyof K | 'operate';
   /** 表格中显示的标题 */
   title: string;
   /**
@@ -47,7 +47,7 @@ export type ProTableColumn = {
 export type ProTableProps = {
   columns: ProTableColumn[];
 }
-export type Params = Record<string, unknown>
+export type Params = Record<string | number | symbol, unknown>
 
 export type RequestList = Record<string, unknown>[]
 
