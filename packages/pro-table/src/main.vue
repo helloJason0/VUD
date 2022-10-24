@@ -324,7 +324,7 @@ export default class ProTable extends Vue {
 
   selectSubmit () {
     Object.assign(this.formData, this.tempFormData);
-    this.getTableData();
+    this.pageChange(1)
   }
 
   resetFormData () {
