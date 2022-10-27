@@ -38,6 +38,10 @@
           {
             "path": "/virtualselect",
             "title": "虚拟滚动"
+          },
+          {
+            "path": "/protable",
+            "title": "高级表格"
           }
         ]
       }   
