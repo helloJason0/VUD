@@ -1,5 +1,4 @@
 [
-
   {
     "name": "开发指南",
     "groups": [
@@ -38,6 +37,10 @@
           {
             "path": "/virtualselect",
             "title": "虚拟滚动"
+          },
+          {
+            "path": "/multiSelectLessNode",
+            "title": "多选（节点渲染数量控制）"
           }
         ]
       }   

@@ -41,7 +41,7 @@ const router = new Router({
       component: FormDialog
     },
     {
-      path: "/MultiSelectLessNode",
+      path: "/multiSelectLessNode",
       component: MultiSelectLessNode
     }
   ]
