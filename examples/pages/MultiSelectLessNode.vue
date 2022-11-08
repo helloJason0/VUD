@@ -4,7 +4,7 @@
       <div class="example__info">设置渲染选项的数量，限制节点过多</div>
       <multi-select-less-node 
         placeholder="请选择城市"
-        :value="value2"
+        :value="value1"
         :optionList="options"
         @input="onInput('value1', $event)"
         optionKeyOfKey="city_id"
@@ -12,7 +12,7 @@
         optionValueOfKey="city_id"
         :limitShowCount="limitShowCount"
       />
-      <collapse-panel :markdownContent="lsaUseLimit"></collapse-panel>
+      <collapse-panel :markdownContent="lsaUseLimit.default"></collapse-panel>
     </div>
     <div class="example-area">
       <div class="example__info">关闭选项渲染数量限制</div>
@@ -26,7 +26,7 @@
         optionValueOfKey="city_id"
         :isLimit="false"
       />
-      <collapse-panel :markdownContent="lsaDisLimit"></collapse-panel>
+      <collapse-panel :markdownContent="lsaDisLimit.default"></collapse-panel>
     </div>
     <api-content :tableDataList="config"></api-content>
   </div>
@@ -34,6 +34,7 @@
 
 <script>
 import CollapsePanel from '../components/CollapsePanel'
+import ApiContent from '../components/api'
 import { options, config } from '../static/MultiSelectLessNode'
 const lsaUseLimit = require('../components/markdownfiles/MultiSelectLessNode/UseLimit.md')
 const lsaDisLimit = require('../components/markdownfiles/MultiSelectLessNode/DisUselimit.md')
@@ -47,15 +48,16 @@ export default {
       lsaDisLimit,
       value1: [],
       value2: [],
-      limitShowCount: 5
+      limitShowCount: 3
     }
   },
   components: {
     CollapsePanel,
+    ApiContent
   },
   methods: {
     onInput(key, newValue) {
-      console.log(key, value);
+      console.log(key, newValue);
       if (this[key] !== newValue) {
         this[key] = newValue
       }

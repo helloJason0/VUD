@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import MultiSelect from './SelectUse.vue';
-import MultiOption from './MultiOption.vue';
+import MultiSelect from '../components/MultiSelect.vue';
+import MultiOption from '../components/MultiOption.vue';
 
 export default {
   name: 'MultiSelectLessNode',

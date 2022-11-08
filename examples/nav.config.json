@@ -44,7 +44,7 @@
           },
           {
             "path": "/multiSelectLessNode",
-            "title": "多选（节点渲染数量控制）"
+            "title": "多选(节点数量控制)"
           }
         ]
       }   
