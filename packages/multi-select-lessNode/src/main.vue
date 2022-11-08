@@ -17,7 +17,7 @@
         :value="item[optionValueOfKey]"
       />
     </multi-select>
-    <el-tooltip :style="tooltipStyle" effect="dark" :content="toolTipCtx" placement="top-start" v-if="isLimit">
+    <el-tooltip :style="tooltipContainerStyle" effect="dark" :content="toolTipCtx" placement="top-start" v-if="isLimit">
       <i class="label-icon" :class="tooltipIcon" />
     </el-tooltip>
   </div>
@@ -28,8 +28,8 @@ import MultiSelect from './SelectUse.vue';
 import MultiOption from './MultiOption.vue';
 
 export default {
-  name: 'Wrap',
-  componentName: 'Wrap',
+  name: 'MultiSelectLessNode',
+  componentName: 'MultiSelectLessNode',
   data () {
     return {
       showList: this.isLimit ? this.optionList.slice(0, this.limitShowCount) : this.optionList
@@ -60,7 +60,7 @@ export default {
       default: true
     },
     // tooltip自定义样式
-    tooltipStyle: {
+    tooltipContainerStyle: {
       type: Object,
       default () {
         return {

@@ -3,20 +3,24 @@ import MultiOption from './multi-option';
 import FormTable from './form-table';
 import FormDialog from './form-dialog';
 import VirtualSelect from './virtual-select';
+import MultiSelectLessNode from './multi-select-lessNode';
+
 // 组件列表
 const components = [
   MultiSelect,
   MultiOption,
   FormTable,
   FormDialog,
-  VirtualSelect
+  VirtualSelect,
+  MultiSelectLessNode
 ];
 const componentsName: string[] = [
   'MultiSelect',
   'MultiOption',
   'FormTable',
   'FormDialog',
-  'VirtualSelect'
+  'VirtualSelect',
+  'MultiSelectLessNode'
 ];
 
 // 如果使用 use 注册插件，则所有的组件都将被注册
@@ -33,5 +37,6 @@ export default {
   MultiSelect,
   FormDialog,
   FormTable,
-  VirtualSelect
+  VirtualSelect,
+  MultiSelectLessNode
 };

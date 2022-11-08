@@ -6,6 +6,7 @@ import FormTable from './pages/FormTable'
 import MultiSelect from './pages/MultiSelect'
 import FormDialog from './pages/FormDialog'
 import VirtualSelect from "./pages/VirtualSelect";
+import MultiSelectLessNode from "./pages/MultiSelectLessNode";
 
 Vue.use(Router)
 
@@ -38,6 +39,10 @@ const router = new Router({
     {
       path: "/formdialog",
       component: FormDialog
+    },
+    {
+      path: "/MultiSelectLessNode",
+      component: MultiSelectLessNode
     }
   ]
 });
