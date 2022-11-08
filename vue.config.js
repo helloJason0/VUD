@@ -38,5 +38,6 @@ module.exports = process.env.VUE_APP_CURRENTMODE === 'part' ? buildConfig : {
       warnings: true,
       errors: true
     }
-  }
+  },
+  lintOnSave: false
 }

@@ -15,7 +15,7 @@ export default {
 </script>
 <style lang="less" scoped>
   header{
-    width: 1440px;
+    // width: 1440px;
     display: flex;
     align-items: center;
     padding-left: 30px;

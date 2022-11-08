@@ -5,10 +5,11 @@
 </template>
 
 <script>
-import marked from 'marked'
+import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 import 'github-markdown-css/github-markdown.css'
+
 export default {
   name: 'markdown',
   props: {

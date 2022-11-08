@@ -5,6 +5,7 @@ import FormDialog from './form-dialog';
 import VirtualSelect from './virtual-select';
 import MultiSelectLessNode from './multi-select-lessNode';
 
+import ProTable from './pro-table';
 // 组件列表
 const components = [
   MultiSelect,
@@ -12,7 +13,8 @@ const components = [
   FormTable,
   FormDialog,
   VirtualSelect,
-  MultiSelectLessNode
+  MultiSelectLessNode,
+  ProTable
 ];
 const componentsName: string[] = [
   'MultiSelect',
@@ -20,7 +22,8 @@ const componentsName: string[] = [
   'FormTable',
   'FormDialog',
   'VirtualSelect',
-  'MultiSelectLessNode'
+  'MultiSelectLessNode',
+  'ProTable'
 ];
 
 // 如果使用 use 注册插件，则所有的组件都将被注册
@@ -38,5 +41,6 @@ export default {
   FormDialog,
   FormTable,
   VirtualSelect,
-  MultiSelectLessNode
+  MultiSelectLessNode,
+  ProTable
 };

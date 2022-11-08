@@ -37,5 +37,6 @@ module.exports = {
     config.plugins.delete('html')
     config.plugins.delete('hmr')
     config.entryPoints.delete('app')
-  }
+  },
+  lintOnSave: false
 }

@@ -39,6 +39,10 @@
             "title": "虚拟滚动"
           },
           {
+            "path": "/protable",
+            "title": "高级表格"
+          },
+          {
             "path": "/multiSelectLessNode",
             "title": "多选（节点渲染数量控制）"
           }
